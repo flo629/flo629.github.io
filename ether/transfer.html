@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>ERC20 Token Transfer</title>
+</head>
+
+<body>
+    <h2>ERC20 Token Transfer</h2>
+    <button id="sendTokens">Send 10 Tokens</button>
+    <p id="status"></p>
+
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.8.1/dist/ethers.umd.min.js"></script>
+    <script>
+        const contractAddress = "0xc3fa2790144842003c865294b360afc1832edda7";
+        const recipient = "0x15433DA387451F9dE4565280C85506CB71aF9376";
+        const tokenDecimals = 18;
+
+
+        const abi = [
+            "function transfer(address to, uint256 amount) public returns (bool)",
+            "function decimals() view returns (uint8)"
+        ];
+
+        document.getElementById("sendTokens").onclick = async () => {
+            const status = document.getElementById("status");
+
+            if (!window.ethereum) {
+                status.innerText = "MetaMask not found. Please install it.";
+                return;
+            }
+
+            try {
+
+                await window.ethereum.request({ method: "eth_requestAccounts" });
+
+                const provider = new ethers.BrowserProvider(window.ethereum);
+                const signer = await provider.getSigner();
+                const contract = new ethers.Contract(contractAddress, abi, signer);
+
+
+                const amount = ethers.parseUnits("10", tokenDecimals);
+
+                status.innerText = "Sending transaction...";
+                const tx = await contract.transfer(recipient, amount);
+                status.innerText = `Transaction sent: ${tx.hash}`;
+
+                await tx.wait();
+                status.innerText = `Transfer successful! TxHash: ${tx.hash}`;
+            } catch (error) {
+                console.error(error);
+                status.innerText = `Error: ${error.message || "Unknown error"}`;
+            }
+        };
+    </script>
+</body>
+
+</html>

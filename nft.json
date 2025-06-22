@@ -1,0 +1,14 @@
+{
+    "name": "Olf NFT #1234",
+    "description": "Super cool.",
+    "attributes": [
+        {
+            "trait_type": "dragon",
+            "value": "normal"
+        },
+        {
+            "trait_type": "cat",
+            "value": "legendary"
+        }
+    ]
+}

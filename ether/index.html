@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Holesky Block Height</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.8.1/dist/ethers.umd.min.js"></script>
+</head>
+
+<body>
+    <h1>Holesky Block Height Checker</h1>
+    <button id="connect">Connect MetaMask</button>
+    <button id="getBlock">Get Current Block Height</button>
+    <p id="output">Block Height will appear here</p>
+
+    <script>
+        const connectButton = document.getElementById('connect');
+        const getBlockButton = document.getElementById('getBlock');
+        const output = document.getElementById('output');
+        let provider;
+
+        connectButton.onclick = async () => {
+            if (typeof window.ethereum === "undefined") {
+                alert("Please install MetaMask.");
+                return;
+            }
+
+            try {
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+                provider = new ethers.BrowserProvider(window.ethereum);
+
+                const network = await provider.getNetwork();
+                if (network.chainId !== 17000n) {
+                    alert("Please switch MetaMask to the Holesky testnet (chainId 17000)");
+                } else {
+                    alert("Connected to Holesky");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Error connecting to MetaMask");
+            }
+        };
+
+        getBlockButton.onclick = async () => {
+            if (!provider) {
+                alert("Please connect MetaMask first.");
+                return;
+            }
+
+            try {
+                const blockNumber = await provider.getBlockNumber();
+                output.innerText = `Current Holesky Block: ${blockNumber}`;
+            } catch (err) {
+                console.error(err);
+                output.innerText = "Error fetching block number";
+            }
+        };
+    </script>
+</body>
+
+</html>
